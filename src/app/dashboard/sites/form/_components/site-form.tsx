@@ -45,17 +45,16 @@ export const SiteForm = ({ site }: Props) => {
 
   const {
     execute: executeSave,
-    result: saveResult,
     isPending: isSaving,
     reset: resetSaveAction
   } = useAction(saveSiteAction, {
     onSuccess({ data }) {
       if (data?.message) {
-        toast.success('Success! 🎉')
+        toast.success(`${data.message} `)
       }
     },
     onError() {
-      toast.error('Edit failed')
+      toast.error('Oh no, something went wrong!')
     }
   })
 
@@ -64,8 +63,6 @@ export const SiteForm = ({ site }: Props) => {
   }
   return (
     <div className='bg-background w-full rounded-md'>
-      {/* <DisplayServerActionResponse result={saveResult} /> */}
-      {saveResult.data?.message}
       <div className='mx-auto mt-24 flex max-w-[500px] flex-col rounded-md border-2 p-4'>
         <div className='mb-4'>
           <h2 className='text-primary text-2xl font-bold'>

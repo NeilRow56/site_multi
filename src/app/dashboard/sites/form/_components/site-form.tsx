@@ -13,6 +13,12 @@ import {
 import { InputWithLabel } from '@/components/inputs/input-with-label'
 import { TextAreaWithLabel } from '@/components/inputs/text-area-with-label'
 import { CheckboxWithLabel } from '@/components/inputs/checkbox-with-label'
+import { useAction } from 'next-safe-action/hooks'
+
+import { toast } from 'sonner'
+// import { DisplayServerActionResponse } from '@/components/display-server-action-response'
+import { LoaderCircle } from 'lucide-react'
+import { saveSiteAction } from '@/app/actions/save-site-action'
 
 type Props = {
   site?: selectSiteSchemaType
@@ -37,12 +43,29 @@ export const SiteForm = ({ site }: Props) => {
     defaultValues
   })
 
-  async function submitForm(data: insertSiteSchemaType) {
-    console.log(data)
-  }
+  const {
+    execute: executeSave,
+    result: saveResult,
+    isPending: isSaving,
+    reset: resetSaveAction
+  } = useAction(saveSiteAction, {
+    onSuccess({ data }) {
+      if (data?.message) {
+        toast.success('Success! 🎉')
+      }
+    },
+    onError() {
+      toast.error('Edit failed')
+    }
+  })
 
+  async function submitForm(data: insertSiteSchemaType) {
+    executeSave(data)
+  }
   return (
     <div className='bg-background w-full rounded-md'>
+      {/* <DisplayServerActionResponse result={saveResult} /> */}
+      {saveResult.data?.message}
       <div className='mx-auto mt-24 flex max-w-[500px] flex-col rounded-md border-2 p-4'>
         <div className='mb-4'>
           <h2 className='text-primary text-2xl font-bold'>
@@ -80,19 +103,27 @@ export const SiteForm = ({ site }: Props) => {
             <div className='mt-4 flex items-center justify-between space-x-4'>
               <Button
                 type='submit'
-                size='lg'
-                disabled={form.formState.isSubmitting}
-                className='button col-span-2'
+                className='w-3/4'
+                variant='default'
+                title='Save'
+                disabled={isSaving}
               >
-                {form.formState.isSubmitting ? 'Submitting' : 'Save'}
+                {isSaving ? (
+                  <>
+                    <LoaderCircle className='animate-spin' /> Saving
+                  </>
+                ) : (
+                  'Save'
+                )}
               </Button>
               <Button
                 type='button'
-                size='lg'
-                variant='outline'
+                variant='destructive'
                 title='Reset'
-                onClick={() => form.reset(defaultValues)}
-                className='border-red-500 text-red-500'
+                onClick={() => {
+                  form.reset(defaultValues)
+                  resetSaveAction()
+                }}
               >
                 Reset
               </Button>

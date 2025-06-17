@@ -2,11 +2,12 @@ import { BackButton } from '@/components/dashboard/back-button'
 import { db } from '@/db'
 import { sites } from '@/db/schema'
 import { getSite } from '@/lib/queries/getSite'
-import { SiteForm } from '@/modules/sites/components/site-form'
-import SiteTable from '@/modules/sites/components/site-table'
+
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 
 import React from 'react'
+import { SiteForm } from './_components/site-form'
+import SiteTable from './_components/site-table'
 
 export async function generateMetadata({
   searchParams
@@ -20,7 +21,7 @@ export async function generateMetadata({
   return { title: `Edit Site #${siteId}` }
 }
 
-const SitesPage = async ({
+const SitesFormPage = async ({
   searchParams
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>
@@ -69,4 +70,4 @@ const SitesPage = async ({
   }
 }
 
-export default SitesPage
+export default SitesFormPage

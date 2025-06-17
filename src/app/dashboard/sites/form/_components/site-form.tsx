@@ -13,12 +13,6 @@ import {
 import { InputWithLabel } from '@/components/inputs/input-with-label'
 import { TextAreaWithLabel } from '@/components/inputs/text-area-with-label'
 import { CheckboxWithLabel } from '@/components/inputs/checkbox-with-label'
-import { useAction } from 'next-safe-action/hooks'
-
-import { toast } from 'sonner'
-import { DisplayServerActionResponse } from '@/components/display-server-action-response'
-import { LoaderCircle } from 'lucide-react'
-import { saveSiteAction } from '@/modules/sites/actions/site-actions'
 
 type Props = {
   site?: selectSiteSchemaType
@@ -43,28 +37,12 @@ export const SiteForm = ({ site }: Props) => {
     defaultValues
   })
 
-  const {
-    execute: executeSave,
-    result: saveResult,
-    isPending: isSaving,
-    reset: resetSaveAction
-  } = useAction(saveSiteAction, {
-    onSuccess({ data }) {
-      if (data?.message) {
-        toast.success('Success! 🎉')
-      }
-    },
-    onError() {
-      toast.error('Edit failed')
-    }
-  })
-
   async function submitForm(data: insertSiteSchemaType) {
-    executeSave(data)
+    console.log(data)
   }
+
   return (
     <div className='bg-background w-full rounded-md'>
-      <DisplayServerActionResponse result={saveResult} />
       <div className='mx-auto mt-24 flex max-w-[500px] flex-col rounded-md border-2 p-4'>
         <div className='mb-4'>
           <h2 className='text-primary text-2xl font-bold'>
@@ -102,27 +80,19 @@ export const SiteForm = ({ site }: Props) => {
             <div className='mt-4 flex items-center justify-between space-x-4'>
               <Button
                 type='submit'
-                className='w-3/4'
-                variant='default'
-                title='Save'
-                disabled={isSaving}
+                size='lg'
+                disabled={form.formState.isSubmitting}
+                className='button col-span-2'
               >
-                {isSaving ? (
-                  <>
-                    <LoaderCircle className='animate-spin' /> Saving
-                  </>
-                ) : (
-                  'Save'
-                )}
+                {form.formState.isSubmitting ? 'Submitting' : 'Save'}
               </Button>
               <Button
                 type='button'
-                variant='destructive'
+                size='lg'
+                variant='outline'
                 title='Reset'
-                onClick={() => {
-                  form.reset(defaultValues)
-                  resetSaveAction()
-                }}
+                onClick={() => form.reset(defaultValues)}
+                className='border-red-500 text-red-500'
               >
                 Reset
               </Button>
